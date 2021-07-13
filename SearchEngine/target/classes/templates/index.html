@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Pages Repository</title>
+</head>
+<body>
+<h1>Pages Repository (<span th:text="${pagesCount}">0</span>)</h1>
+<div id="page-list">
+    <div th:each="page : ${pages}">
+        <a href="#" class="page-link" th:attr="data-id=${page.id}" th:text="${page.path}"></a>
+    </div>
+</div>
+</body>
+</html>
