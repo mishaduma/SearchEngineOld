@@ -37,6 +37,9 @@ public class Source {
                     .filter(element -> element.length() > url.length())
                     .forEach(childNames::add);
 
+            if (!url.endsWith("/")) {
+                url += "/";
+            }
             page.setPath(url.substring(url.indexOf("//") + 2).substring(url.substring(url.indexOf("//") + 2).indexOf("/")));
             page.setContent(doc.html());
             page.setCode(Jsoup.connect(url)

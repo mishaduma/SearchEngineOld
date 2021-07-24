@@ -7,6 +7,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
+@Table(indexes = {@Index(columnList = "path")})
 public class Page {
 
     @Id
@@ -14,6 +15,7 @@ public class Page {
     private Integer id;
 
     @NotNull
+    @Column(length = 200)
     private String path;
 
     @NotNull
