@@ -1,6 +1,5 @@
 package main.model;
 
-import com.sun.istack.NotNull;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -14,14 +13,12 @@ public class Page {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotNull
-    @Column(length = 200)
+    @Column(length = 200, nullable = false)
     private String path;
 
-    @NotNull
+    @Column(nullable = false)
     private Integer code;
 
-    @NotNull
-    @Column(columnDefinition = "mediumtext")
+    @Column(columnDefinition = "mediumtext", nullable = false)
     private String content;
 }

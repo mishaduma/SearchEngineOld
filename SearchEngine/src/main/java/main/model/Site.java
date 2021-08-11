@@ -1,4 +1,4 @@
-package main.parser;
+package main.model;
 
 import lombok.Data;
 

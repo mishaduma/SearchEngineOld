@@ -1,8 +1,8 @@
 package main.parser;
 
 import main.model.Page;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.util.Collection;
@@ -23,13 +23,12 @@ public class Source {
         Set<String> childNames = new HashSet<>();
 
         try {
-            Document doc = Jsoup.connect(url)
+            Connection connection = Jsoup.connect(url)
                     .userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1;en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
                     .referrer("http://www.google.com")
-                    .timeout(1000)
-                    .get();
+                    .timeout(1000);
 
-            Elements elements = doc.getElementsByTag("a");
+            Elements elements = connection.get().getElementsByTag("a");
             elements.stream()
                     .map(element -> element.absUrl("href"))
                     .filter(element -> element.contains(url))
@@ -37,16 +36,10 @@ public class Source {
                     .filter(element -> element.length() > url.length())
                     .forEach(childNames::add);
 
-            if (!url.endsWith("/")) {
-                url += "/";
-            }
-            page.setPath(url.substring(url.indexOf("//") + 2).substring(url.substring(url.indexOf("//") + 2).indexOf("/")));
-            page.setContent(doc.html());
-            page.setCode(Jsoup.connect(url)
-                    .userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1;en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
-                    .referrer("http://www.google.com")
-                    .execute()
-                    .statusCode());
+            page.setPath(url);
+            page.setContent(connection.get().html());
+            page.setCode(connection.execute().statusCode());
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }

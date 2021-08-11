@@ -32,11 +32,13 @@ public class Tasker extends RecursiveTask<Collection<Page>> {
             taskList.add(task);
         }
 
-        if (source.getPage().getPath() != null) {
+        if (source.getPage().getCode() != null && source.getPage().getContent() != null) {
             pages.add(source.getPage());
             if (pages.size() == 20) {
-                pageService.uploadPages(pages);
-                pages.clear();
+                synchronized (pages) {
+                    pageService.uploadPages(pages);
+                    pages.clear();
+                }
             }
         }
 
