@@ -10,14 +10,15 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class Lemma {
-    public Map<String, Integer> get(String text) throws IOException {
+public class LemmasCounter {
+    public Map<String, Integer> getLemmas(String text) throws IOException {
         LuceneMorphology luceneMorphology = new RussianLuceneMorphology();
-        String[] allWords = text.toLowerCase(Locale.ROOT).replaceAll("\\pP", " ").split("\\s+");
+        String[] allWords = text.toLowerCase(Locale.ROOT).replaceAll("\\pP", " ").trim().split("\\s+");
         ArrayList<String> wordBaseForms = new ArrayList<>();
 
         for (String word : allWords) {
-            if (!luceneMorphology.getMorphInfo(word).toString().contains("СОЮЗ") &&
+            if (!word.isEmpty() && !word.isBlank() &&
+                    !luceneMorphology.getMorphInfo(word).toString().contains("СОЮЗ") &&
                     !luceneMorphology.getMorphInfo(word).toString().contains("МЕЖД") &&
                     !luceneMorphology.getMorphInfo(word).toString().contains("ЧАСТ") &&
                     !luceneMorphology.getMorphInfo(word).toString().contains("ПРЕДЛ")) {

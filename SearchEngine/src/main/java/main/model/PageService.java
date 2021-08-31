@@ -10,15 +10,16 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class PageService {
-    private final PagesRepository pagesRepository;
+
+    private final PageRepository pageRepository;
 
     public void uploadPages(Collection<Page> pages) {
-        pagesRepository.saveAll(pages);
+        pageRepository.saveAll(pages);
     }
 
     public List<Page> listPages() {
         List<Page> pages = new ArrayList<>();
-        pagesRepository.findAll().forEach(pages::add);
+        pageRepository.findAll().forEach(pages::add);
         return pages;
     }
 }
