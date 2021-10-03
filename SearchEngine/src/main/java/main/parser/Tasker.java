@@ -1,10 +1,10 @@
 package main.parser;
 
 import lombok.SneakyThrows;
-import main.model.FieldService;
 import main.model.Page;
-import main.model.PageService;
 import main.model.RankedLemma;
+import main.storage.FieldService;
+import main.storage.PageService;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,11 +42,9 @@ public class Tasker extends RecursiveTask<Collection<Page>> {
 
         if (source.getPage().getCode() != null && source.getPage().getContent() != null) {
             pages.add(source.getPage());
-            if (pages.size() == 20) {
-                synchronized (pages) {
-                    pageService.uploadPages(pages);
-                    pages.clear();
-                }
+            if (pages.size() == 250) {
+                pageService.uploadPages(pages);
+                pages.clear();
             }
         }
 

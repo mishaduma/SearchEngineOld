@@ -1,6 +1,7 @@
-package main.model;
+package main.storage;
 
 import lombok.RequiredArgsConstructor;
+import main.model.Field;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

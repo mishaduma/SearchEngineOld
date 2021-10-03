@@ -13,7 +13,7 @@ public class Page {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(length = 200, nullable = false)
+    @Column(length = 250, nullable = false)
     private String path;
 
     @Column(nullable = false)

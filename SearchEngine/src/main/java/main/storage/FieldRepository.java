@@ -1,8 +1,9 @@
-package main.model;
+package main.storage;
 
+import main.model.Field;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface LemmaRepository extends CrudRepository<Lemma, Integer> {
+public interface FieldRepository extends CrudRepository<Field, Integer> {
 }
