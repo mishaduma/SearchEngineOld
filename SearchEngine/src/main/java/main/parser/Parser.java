@@ -2,10 +2,10 @@ package main.parser;
 
 import lombok.RequiredArgsConstructor;
 import main.model.*;
-import main.storage.FieldService;
-import main.storage.LemmaService;
-import main.storage.PageService;
-import main.storage.SearchIndexService;
+import main.service.FieldService;
+import main.service.LemmaService;
+import main.service.PageService;
+import main.service.SearchIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -45,9 +45,11 @@ public class Parser {
 
         fieldService.uploadFields(Arrays.asList(title, body));
 
+        List<Field> fields = fieldService.getFields();
+
         //uploading pages
         for (Site site : sites.getSites()) {
-            pageService.uploadPages(new ForkJoinPool().invoke(new Tasker(new Source(site.getUrl(), rankedLemmas, fieldService), pageService, fieldService, rankedLemmas)));
+            pageService.uploadPages(new ForkJoinPool().invoke(new Tasker(new Source(site.getUrl(), rankedLemmas, fields), pageService, fields, rankedLemmas)));
             System.out.println("Обработан сайт: " + site.getName());
         }
         System.out.println("Страниц добавлено: " + pageService.countPages() + "\nЗаполняется таблица lemma...");
@@ -64,16 +66,15 @@ public class Parser {
 
         lemmaService.uploadLemmas(lemmas);
 
-        System.out.println("Лемм добавлено: " + lemmaService.countLemmas());
+        System.out.println("Лемм добавлено: " + lemmaService.countLemmas() + "\nЗаполняется lemmasId...");
 
         //uploading searchIndex
         Collection<SearchIndex> searchIndices = new HashSet<>();
-        System.out.println("Заполнение lemmasId...");
         Map<String, Integer> lemmasId = new HashMap<>();
         for (Lemma lemma : lemmaService.downloadLemmas()) {
             lemmasId.put(lemma.getLemma(), lemma.getId());
         }
-        System.out.println("Заполнение pagesId...");
+        System.out.println("Заполняется pagesId...");
         Map<String, Integer> pagesId = new HashMap<>();
         for (Page page : pageService.downloadPages()) {
             pagesId.put(page.getPath(), page.getId());

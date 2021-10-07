@@ -1,7 +1,8 @@
-package main.storage;
+package main.service;
 
 import lombok.RequiredArgsConstructor;
 import main.model.Page;
+import main.repository.PageRepository;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
@@ -43,6 +44,8 @@ public class PageService {
         SessionFactory sessionFactory = metadata.getSessionFactoryBuilder().build();
 
         List<Page> pages = sessionFactory.openSession().createQuery("from Page", Page.class).getResultList();
+
+        sessionFactory.close();
 
         return pages;
     }

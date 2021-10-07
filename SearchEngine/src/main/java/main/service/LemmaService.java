@@ -1,7 +1,8 @@
-package main.storage;
+package main.service;
 
 import lombok.RequiredArgsConstructor;
 import main.model.Lemma;
+import main.repository.LemmaRepository;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
@@ -43,6 +44,8 @@ public class LemmaService {
         SessionFactory sessionFactory = metadata.getSessionFactoryBuilder().build();
 
         List<Lemma> lemmas = sessionFactory.openSession().createQuery("from Lemma", Lemma.class).getResultList();
+
+        sessionFactory.close();
 
         return lemmas;
     }

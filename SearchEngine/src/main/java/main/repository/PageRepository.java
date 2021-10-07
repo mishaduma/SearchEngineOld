@@ -1,9 +1,9 @@
-package main.storage;
+package main.repository;
 
-import main.model.Lemma;
+import main.model.Page;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface LemmaRepository extends CrudRepository<Lemma, Integer> {
+public interface PageRepository extends CrudRepository<Page, Integer> {
 }

@@ -1,10 +1,10 @@
 package main.parser;
 
 import lombok.SneakyThrows;
+import main.model.Field;
 import main.model.Page;
 import main.model.RankedLemma;
-import main.storage.FieldService;
-import main.storage.PageService;
+import main.service.PageService;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,13 +17,13 @@ public class Tasker extends RecursiveTask<Collection<Page>> {
     private Source source;
 
     private PageService pageService;
-    private FieldService fieldService;
+    private List<Field> fields;
     private ArrayList<RankedLemma> rankedLemmas;
 
-    public Tasker(Source source, PageService pageService, FieldService fieldService, ArrayList<RankedLemma> rankedLemmas) {
+    public Tasker(Source source, PageService pageService, List<Field> fields, ArrayList<RankedLemma> rankedLemmas) {
         this.source = source;
         this.pageService = pageService;
-        this.fieldService = fieldService;
+        this.fields = fields;
         this.rankedLemmas = rankedLemmas;
     }
 
@@ -35,7 +35,7 @@ public class Tasker extends RecursiveTask<Collection<Page>> {
 
         List<Tasker> taskList = new ArrayList<>();
         for (Source child : source.getChildren()) {
-            Tasker task = new Tasker(child, pageService, fieldService, rankedLemmas);
+            Tasker task = new Tasker(child, pageService, fields, rankedLemmas);
             task.fork();
             taskList.add(task);
         }

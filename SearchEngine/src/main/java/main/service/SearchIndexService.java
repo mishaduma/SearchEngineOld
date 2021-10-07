@@ -1,7 +1,8 @@
-package main.storage;
+package main.service;
 
 import lombok.RequiredArgsConstructor;
 import main.model.SearchIndex;
+import main.repository.SearchIndexRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;

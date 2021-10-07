@@ -1,4 +1,4 @@
-package main.storage;
+package main.repository;
 
 import main.model.Field;
 import org.springframework.data.repository.CrudRepository;
