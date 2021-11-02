@@ -3,11 +3,6 @@ package main.service;
 import lombok.RequiredArgsConstructor;
 import main.model.Lemma;
 import main.repository.LemmaRepository;
-import org.hibernate.SessionFactory;
-import org.hibernate.boot.Metadata;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistry;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -23,31 +18,8 @@ public class LemmaService {
         lemmaRepository.saveAll(lemmas);
     }
 
-    public Lemma getLemma(String lemma) {
-
-        StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-                .configure("hibernate.cfg.xml").build();
-        Metadata metadata = new MetadataSources(registry).getMetadataBuilder().build();
-        SessionFactory sessionFactory = metadata.getSessionFactoryBuilder().build();
-
-        Lemma targetLemma = sessionFactory.openSession().createQuery("from Lemma where lemma = '" + lemma + "'", Lemma.class).getResultList().get(0);
-
-        sessionFactory.close();
-
-        return targetLemma;
-    }
-
     public List<Lemma> downloadLemmas() {
-        StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-                .configure("hibernate.cfg.xml").build();
-        Metadata metadata = new MetadataSources(registry).getMetadataBuilder().build();
-        SessionFactory sessionFactory = metadata.getSessionFactoryBuilder().build();
-
-        List<Lemma> lemmas = sessionFactory.openSession().createQuery("from Lemma", Lemma.class).getResultList();
-
-        sessionFactory.close();
-
-        return lemmas;
+        return lemmaRepository.downloadLemmas();
     }
 
     public long countLemmas() {
