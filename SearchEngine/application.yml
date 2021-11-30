@@ -7,8 +7,7 @@ spring:
     hibernate:
       ddl-auto: validate
   flyway:
-    locations: src/main/resources/db/migration
-    check-location: false
+    locations: classpath:db/migration
 sites:
   - url: http://www.playback.ru
     name: Playback.ru
