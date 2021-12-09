@@ -36,7 +36,7 @@ public class Source {
             connection = Jsoup.connect(url)
                     .userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1;en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
                     .referrer("http://www.google.com")
-                    .timeout(1000);
+                    .timeout(5000);
 
             if (url.length() < 251) {
                 Elements elements = connection.get().getElementsByTag("a");

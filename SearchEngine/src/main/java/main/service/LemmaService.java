@@ -19,7 +19,7 @@ public class LemmaService {
     }
 
     public List<Lemma> downloadLemmas() {
-        return lemmaRepository.downloadLemmas();
+        return lemmaRepository.findAll();
     }
 
     public long countLemmas() {

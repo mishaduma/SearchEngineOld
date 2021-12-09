@@ -19,6 +19,6 @@ public class FieldService {
     }
 
     public List<Field> getFields() {
-        return fieldRepository.getFields();
+        return fieldRepository.findAll();
     }
 }

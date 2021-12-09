@@ -19,7 +19,7 @@ public class PageService {
     }
 
     public List<Page> downloadPages() {
-        return pageRepository.downloadPages();
+        return pageRepository.findAll();
     }
 
     public long countPages() {
