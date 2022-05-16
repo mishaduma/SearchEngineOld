@@ -7,6 +7,7 @@ import main.service.LemmaService;
 import main.service.PageService;
 import main.service.SearchIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -48,47 +49,61 @@ public class Parser {
         List<Field> fields = fieldService.getFields();
 
         //uploading pages
-        for (Site site : sites.getSites()) {
-            pageService.uploadPages(new ForkJoinPool().invoke(new Tasker(new Source(site.getUrl(), rankedLemmas, fields), pageService, fields, rankedLemmas)));
-            System.out.println("Обработан сайт: " + site.getName());
-        }
-        System.out.println("Страниц добавлено: " + pageService.countPages() + "\nЗаполняется таблица lemma...");
+        new Thread(() -> {
+            List<Thread> threads = new ArrayList<>();
+            for (Site site : sites.getSites()) {
+                Thread thread = new Thread(() -> {
+                    pageService.uploadPages(new ForkJoinPool().invoke(new Tasker(new Source(site.getUrl(), rankedLemmas, fields), pageService, fields, rankedLemmas)));
+                    System.out.println("Обработан сайт: " + site.getName());
+                });
+                thread.start();
+                threads.add(thread);
+            }
+            for (Thread t : threads) {
+                try {
+                    t.join();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            System.out.println("Страниц добавлено: " + pageService.countPages() + "\nЗаполняется таблица lemma...");
 
-        //uploading lemmas
-        Collection<Lemma> lemmas = new HashSet<>();
-        Map<String, Integer> lemmasMap = rankedLemmas.stream().map(rankedLemma -> rankedLemma.getLemma()).collect(Collectors.toMap(Function.identity(), V -> 1, Integer::sum));
-        for (String lemmaFromMap : lemmasMap.keySet()) {
-            Lemma lemma = new Lemma();
-            lemma.setLemma(lemmaFromMap);
-            lemma.setFrequency(lemmasMap.get(lemmaFromMap).intValue());
-            lemmas.add(lemma);
-        }
+            //uploading lemmas
+            Collection<Lemma> lemmas = new HashSet<>();
+            Map<String, Integer> lemmasMap = rankedLemmas.stream().map(rankedLemma -> rankedLemma.getLemma()).collect(Collectors.toMap(Function.identity(), V -> 1, Integer::sum));
+            for (String lemmaFromMap : lemmasMap.keySet()) {
+                Lemma lemma = new Lemma();
+                lemma.setLemma(lemmaFromMap);
+                lemma.setFrequency(lemmasMap.get(lemmaFromMap).intValue());
+                lemmas.add(lemma);
+            }
 
-        lemmaService.uploadLemmas(lemmas);
+            lemmaService.uploadLemmas(lemmas);
 
-        System.out.println("Лемм добавлено: " + lemmaService.countLemmas() + "\nЗаполняется lemmasId...");
+            System.out.println("Лемм добавлено: " + lemmaService.countLemmas() + "\nЗаполняется lemmasId...");
 
-        //uploading searchIndex
-        Collection<SearchIndex> searchIndices = new HashSet<>();
-        Map<String, Integer> lemmasId = new HashMap<>();
-        for (Lemma lemma : lemmaService.downloadLemmas()) {
-            lemmasId.put(lemma.getLemma(), lemma.getId());
-        }
-        System.out.println("Заполняется pagesId...");
-        Map<String, Integer> pagesId = new HashMap<>();
-        for (Page page : pageService.downloadPages()) {
-            pagesId.put(page.getPath(), page.getId());
-        }
-        System.out.println("Заполняется таблица search_index...");
-        for (RankedLemma rankedLemma : rankedLemmas) {
-            SearchIndex searchIndex = new SearchIndex();
-            searchIndex.setLemmaId(lemmasId.get(rankedLemma.getLemma()).intValue());
-            searchIndex.setPageId(pagesId.get(rankedLemma.getUrl()).intValue());
-            searchIndex.setLemmaRank(rankedLemma.getRank());
-            searchIndices.add(searchIndex);
-        }
-        searchIndexService.uploadSearchIndex(searchIndices);
+            //uploading searchIndex
+            Collection<SearchIndex> searchIndices = new HashSet<>();
+            Map<String, Integer> lemmasId = new HashMap<>();
+            for (Lemma lemma : lemmaService.downloadLemmas()) {
+                lemmasId.put(lemma.getLemma(), lemma.getId());
+            }
+            System.out.println("Заполняется pagesId...");
+            Map<String, Integer> pagesId = new HashMap<>();
+            for (Page page : pageService.downloadPages()) {
+                pagesId.put(page.getPath(), page.getId());
+            }
+            System.out.println("Заполняется таблица search_index...");
+            for (RankedLemma rankedLemma : rankedLemmas) {
+                SearchIndex searchIndex = new SearchIndex();
+                searchIndex.setLemmaId(lemmasId.get(rankedLemma.getLemma()).intValue());
+                searchIndex.setPageId(pagesId.get(rankedLemma.getUrl()).intValue());
+                searchIndex.setLemmaRank(rankedLemma.getRank());
+                searchIndices.add(searchIndex);
+            }
+            searchIndexService.uploadSearchIndex(searchIndices);
 
-        System.out.println("SearchIndex добавлено: " + searchIndexService.countSearchIndex());
+            System.out.println("SearchIndex добавлено: " + searchIndexService.countSearchIndex());
+        }).start();
     }
 }
