@@ -19,10 +19,10 @@ public class Source {
     private String url;
     private Page page = new Page();
     private Connection connection;
-    private ArrayList<RankedLemma> rankedLemmas;
+    private List<RankedLemma> rankedLemmas;
     private List<Field> fields;
 
-    public Source(String url, ArrayList<RankedLemma> rankedLemmas, List<Field> fields) {
+    public Source(String url, List<RankedLemma> rankedLemmas, List<Field> fields) {
         this.url = url;
         this.rankedLemmas = rankedLemmas;
         this.fields = fields;
